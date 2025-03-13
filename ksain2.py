@@ -8,6 +8,7 @@ from threading import Thread
 from time import sleep
 
 import requests
+from sqlalchemy import or_
 
 from db.connection import SessionLocal
 from db.model import Schedules, UnprocessedSchedules
@@ -72,6 +73,8 @@ def get_ksain_posts(count: int):
         for i in res
         if not mariadb.query(Schedules)
         .filter(Schedules.ksain_id == i["documentID"])
+        .all() and not mariadb.query(UnprocessedSchedules)
+        .filter(UnprocessedSchedules.ksain_id == i["documentID"])
         .all()
     ]
     # print(data)

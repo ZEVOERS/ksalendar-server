@@ -2,7 +2,7 @@ import datetime
 from tokenize import String
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
-from sqlalchemy import func, or_
+from sqlalchemy import and_, func, or_
 from datetime import date
 
 from db.connection import get_db
@@ -32,24 +32,65 @@ schedules_order_by_ref = {
 schedules_order_by = [Schedules.starts_at, Schedules.ends_at, Schedules.title]
 
 
-@router.get("/search/by_starts_at")
+@router.get("/daily")
 def srfunc(
-    count: int = 5,
-    search: date = datetime.datetime.today().date(),
+    date: date = datetime.datetime.today().date(),
     mariadb: Session = Depends(get_db),
 ):
     return (
         mariadb.query(Schedules)
         .filter(
             or_(
-                func.date(Schedules.starts_at) == search,
-                func.date(Schedules.ends_at) == search,
+                func.date(Schedules.starts_at) == date,
+                func.date(Schedules.ends_at) == date,
             )
         )
         .order_by(schedules_order_by[schedules_order_by_ref["starts_at"]])
-        .limit(count)
         .all()
     )
+
+@router.get("/interval")
+def srfunc(
+    start_date: datetime.date = datetime.datetime.today().date(),
+    end_date: datetime.date = datetime.datetime.today().date(),
+    mariadb: Session = Depends(get_db),
+):
+    return (
+        mariadb.query(Schedules)
+        .filter(
+            or_(
+                and_(
+                    func.date(Schedules.starts_at) >= start_date,
+                    func.date(Schedules.starts_at) <= end_date,
+                ),
+                and_(
+                    func.date(Schedules.ends_at) >= start_date,
+                    func.date(Schedules.ends_at) <= end_date,
+                ),
+            )
+        )
+        .order_by(Schedules.starts_at)
+        .all()
+    )
+
+    # @router.get("/monthly")
+    # def srfunc(
+    #     count: int = 5,
+    #     search: date = datetime.datetime.today().date(),
+    #     mariadb: Session = Depends(get_db),
+    # ):
+    #     return (
+    #         mariadb.query(Schedules)
+    #         .filter(
+    #             or_(
+    #                 func.date(Schedules.starts_at) == search,
+    #                 func.date(Schedules.ends_at) == search,
+    #             )
+    #         )
+    #         .order_by(schedules_order_by[schedules_order_by_ref["starts_at"]])
+    #         .limit(count)
+    #         .all()
+    #     )
 
 
 @router.get("/{sid}")
