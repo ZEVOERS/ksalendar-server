@@ -10,11 +10,10 @@ from routes import auth, meals, schedules
 app = FastAPI()
 
 origins = [
-    "http://192.168.190.82:8080",
     "http://localhost:3000",
     "http://localhost:8080",
-    "https://mkdb.zevoers.dev",
-    "https://mkdb.dev",
+    "https://ksalendar_api.zevoers.dev",
+    "https://ksalendar.zevoers.dev",
 ]
 
 app.add_middleware(
