@@ -14,6 +14,7 @@ origins = [
     "http://localhost:8080",
     "https://ksalendar_api.zevoers.dev",
     "https://ksalendar.zevoers.dev",
+    "http://baeksikoo.iptime.org"
 ]
 
 app.add_middleware(
