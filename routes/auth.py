@@ -82,6 +82,7 @@ def srfunc(data: AccountLogin, mariadb: Session = Depends(get_db)):
             httponly=True,
             max_age=99999999,
             path="/",
+            domain=".bsiku.dev"
         )
         res.set_cookie(
             key="session_id",
@@ -91,6 +92,7 @@ def srfunc(data: AccountLogin, mariadb: Session = Depends(get_db)):
             httponly=True,
             max_age=99999999,
             path="/",
+            domain=".bsiku.dev"
         )
         return res
     raise HTTPException(status_code=401, detail="Login failed")
